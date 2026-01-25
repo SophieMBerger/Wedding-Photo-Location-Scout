@@ -6,10 +6,9 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import assert from "assert";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Markers from "./Markers";
-
-export const vancouverCoordinates = { lat: 49.2827, lng: -123.1207 };
+import { vancouverCoordinates } from "./page";
 
 export async function getPlaceDetails(
   query: string,
@@ -63,12 +62,38 @@ function MapCenterChangeListener({
   return null;
 }
 
-export default function MapComponent() {
-  const [center, setCenter] = useState(vancouverCoordinates);
-  const [markerLocations, setMarkerLocations] = useState([
-    { key: "vancouver", location: vancouverCoordinates },
-  ]);
+function MapPanEffect({
+  markerLocations,
+}: {
+  markerLocations: {
+    key: string;
+    location: google.maps.LatLngLiteral;
+  }[];
+}) {
+  const map = useMap();
 
+  useEffect(() => {
+    if (!map || markerLocations.length === 0) return;
+
+    const newest = markerLocations.at(-1);
+
+    if (!newest?.location) return;
+
+    map.panTo(newest?.location);
+  }, [map, markerLocations]);
+  return null;
+}
+
+export default function MapComponent({
+  markerLocations,
+  onCenterChange,
+}: {
+  markerLocations: {
+    key: string;
+    location: google.maps.LatLngLiteral;
+  }[];
+  onCenterChange: (center: google.maps.LatLngLiteral) => void;
+}) {
   assert(
     process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     "Maps API key must exist",
@@ -87,7 +112,8 @@ export default function MapComponent() {
         disableDefaultUI
         mapId={process.env.NEXT_PUBLIC_MAP_ID}
       >
-        <MapCenterChangeListener onCenterChange={setCenter} />
+        <MapCenterChangeListener onCenterChange={onCenterChange} />
+        <MapPanEffect markerLocations={markerLocations} />
         <Markers markerLocations={markerLocations} />
       </GoogleMap>
     </APIProvider>
