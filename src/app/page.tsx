@@ -1,7 +1,7 @@
 "use client";
 
-import MapComponent, { getPlaceDetails } from "./MapComponent";
-import MapOverlay from "./MapOverlay";
+import MapComponent, { getPlaceDetails } from "./Map/MapComponent";
+import MapOverlay from "./Map/MapOverlay";
 import { useState } from "react";
 
 export const vancouverCoordinates = { lat: 49.2827, lng: -123.1207 };

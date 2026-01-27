@@ -1,14 +1,11 @@
 "use client";
 
-import {
-  APIProvider,
-  Map as GoogleMap,
-  useMap,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import assert from "assert";
-import { useEffect } from "react";
 import Markers from "./Markers";
-import { vancouverCoordinates } from "./page";
+import { vancouverCoordinates } from "../page";
+import MapPanComponent from "./MapPanComponent";
+import MapCenterChangeComponent from "./MapCenterChangeComponent";
 
 export async function getPlaceDetails(
   query: string,
@@ -29,59 +26,6 @@ export async function getPlaceDetails(
 
   const { places } = await google.maps.places.Place.searchByText(request);
   return places;
-}
-
-function MapCenterChangeListener({
-  onCenterChange,
-}: {
-  onCenterChange: (center: google.maps.LatLngLiteral) => void;
-}) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!map) return;
-
-    const updateCenter = () => {
-      const center = map.getCenter();
-      if (!center) return;
-
-      onCenterChange({
-        lat: center.lat(),
-        lng: center.lng(),
-      });
-    };
-
-    updateCenter();
-    map.addListener("idle", updateCenter);
-
-    return () => {
-      google.maps.event.clearListeners(map, "idle");
-    };
-  }, [map, onCenterChange]);
-
-  return null;
-}
-
-function MapPanEffect({
-  markerLocations,
-}: {
-  markerLocations: {
-    key: string;
-    location: google.maps.LatLngLiteral;
-  }[];
-}) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!map || markerLocations.length === 0) return;
-
-    const newest = markerLocations.at(-1);
-
-    if (!newest?.location) return;
-
-    map.panTo(newest?.location);
-  }, [map, markerLocations]);
-  return null;
 }
 
 export default function MapComponent({
@@ -112,8 +56,8 @@ export default function MapComponent({
         disableDefaultUI
         mapId={process.env.NEXT_PUBLIC_MAP_ID}
       >
-        <MapCenterChangeListener onCenterChange={onCenterChange} />
-        <MapPanEffect markerLocations={markerLocations} />
+        <MapCenterChangeComponent onCenterChange={onCenterChange} />
+        <MapPanComponent markerLocations={markerLocations} />
         <Markers markerLocations={markerLocations} />
       </GoogleMap>
     </APIProvider>
