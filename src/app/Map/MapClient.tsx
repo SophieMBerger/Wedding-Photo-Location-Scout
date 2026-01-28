@@ -14,17 +14,32 @@ export const vancouverCoordinates = { lat: 49.2827, lng: -123.1207 };
 export default function MapClient({ initialMarkers }: MapClientProps) {
   const [center, setCenter] = useState(vancouverCoordinates);
   const [markers, setMarkers] = useState(initialMarkers);
+  const [locationSearched, setLocationSearched] =
+    useState<google.maps.LatLngLiteral>(vancouverCoordinates);
+  const [place, setPlace] = useState<google.maps.places.Place | null>(null);
 
-  async function handleSearch(query: string) {
+  async function handlePlaceSearch(query: string) {
     if (!query.trim()) return;
 
     const places = await getPlaceDetails(query, center);
 
     console.log("Details of place searched for: ", places[0]);
 
-    const place = places[0];
-    if (!place.location) return;
+    const searchedPlace = places[0];
 
+    if (!searchedPlace) return;
+    if (!searchedPlace.location) return;
+
+    setPlace(searchedPlace);
+
+    setLocationSearched({
+      lat: searchedPlace.location.lat(),
+      lng: searchedPlace.location.lng(),
+    });
+  }
+
+  async function handleSearch() {
+    if (!place || !place.location) return;
     const newMarker = {
       key: place.id,
       name: place.displayName || "",
@@ -36,7 +51,6 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
     };
 
     setMarkers((prev) => [...prev, newMarker]);
-
     await fetch("/api/locations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -47,14 +61,20 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
         lng: newMarker.location.lng,
       }),
     });
+
+    setPlace(null);
   }
 
   return (
     <div className="relative w-screen h-screen">
-      <MapComponent markerLocations={markers} onCenterChange={setCenter} />
+      <MapComponent
+        markerLocations={markers}
+        onCenterChange={setCenter}
+        searchedLocation={locationSearched}
+      />
 
       <div className="absolute inset-0 pointer-events-none">
-        <MapOverlay onSearch={handleSearch} />
+        <MapOverlay onSearch={handleSearch} onQuerySubmit={handlePlaceSearch} />
       </div>
     </div>
   );

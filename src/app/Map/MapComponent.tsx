@@ -30,9 +30,11 @@ export async function getPlaceDetails(
 
 export default function MapComponent({
   markerLocations,
+  searchedLocation,
   onCenterChange,
 }: {
   markerLocations: Marker[];
+  searchedLocation: google.maps.LatLngLiteral;
   onCenterChange: (center: google.maps.LatLngLiteral) => void;
 }) {
   assert(
@@ -54,7 +56,7 @@ export default function MapComponent({
         mapId={process.env.NEXT_PUBLIC_MAP_ID}
       >
         <MapCenterChangeComponent onCenterChange={onCenterChange} />
-        <MapPanComponent markerLocations={markerLocations} />
+        <MapPanComponent location={searchedLocation} />
         <Markers markerLocations={markerLocations} />
       </GoogleMap>
     </APIProvider>

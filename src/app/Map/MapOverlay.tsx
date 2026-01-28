@@ -2,21 +2,25 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function MapOverlay({
   onSearch,
+  onQuerySubmit,
 }: {
-  onSearch: (query: string) => void;
+  onSearch: () => void;
+  onQuerySubmit: (query: string) => void;
 }) {
   const [place, setPlace] = useState("");
 
   return (
     <div className="absolute top-4 left-4 z-50 pointer-events-auto">
-      <Card className="w-80 p-4 shadow-lg">
+      <Card className="p-4 shadow-lg">
         <form
+          className="flex flex-row gap-2"
           onSubmit={(e) => {
             e.preventDefault();
-            onSearch(place);
+            onQuerySubmit(place);
           }}
         >
           <input
@@ -26,6 +30,11 @@ export default function MapOverlay({
             value={place}
             onChange={(e) => setPlace(e.target.value)}
           />
+          {place && (
+            <Button type="button" disabled={!place} onClick={() => onSearch()}>
+              Save Location
+            </Button>
+          )}
         </form>
       </Card>
     </div>
