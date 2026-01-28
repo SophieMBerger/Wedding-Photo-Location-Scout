@@ -3,7 +3,7 @@
 import { APIProvider, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import assert from "assert";
 import Markers from "./Markers";
-import { vancouverCoordinates } from "../page";
+import { vancouverCoordinates } from "./MapClient";
 import MapPanComponent from "./MapPanComponent";
 import MapCenterChangeComponent from "./MapCenterChangeComponent";
 
