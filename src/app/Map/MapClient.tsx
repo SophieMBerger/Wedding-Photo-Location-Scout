@@ -3,8 +3,9 @@
 import MapComponent, { getPlaceDetails } from "./MapComponent";
 import MapOverlay from "./MapOverlay";
 import { useState } from "react";
+import { getLocations } from "@/actions/getLocations";
 
-type Marker = {
+export type Marker = {
   key: string;
   location: {
     lat: number;
@@ -28,15 +29,27 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
     const places = await getPlaceDetails(query, center);
     if (!places[0].location) return;
 
-    setMarkers(
-      markers.concat({
-        key: places[0].id,
-        location: {
-          lat: places[0].location.lat(),
-          lng: places[0].location.lng(),
-        },
+    console.log("Details of place searched for: ", places[0]);
+
+    const newMarker = {
+      key: places[0].id,
+      location: {
+        lat: places[0].location.lat(),
+        lng: places[0].location.lng(),
+      },
+    };
+
+    setMarkers((prev) => [...prev, newMarker]);
+
+    await fetch("/api/locations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: newMarker.key,
+        lat: newMarker.location.lat,
+        lng: newMarker.location.lng,
       }),
-    );
+    });
   }
 
   return (
