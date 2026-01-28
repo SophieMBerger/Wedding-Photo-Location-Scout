@@ -1,11 +1,11 @@
 "use client";
 
+import assert from "node:assert";
 import { APIProvider, Map as GoogleMap } from "@vis.gl/react-google-maps";
-import assert from "assert";
-import Markers, { Marker } from "./Markers";
+import MapCenterChangeComponent from "./MapCenterChangeComponent";
 import { vancouverCoordinates } from "./MapClient";
 import MapPanComponent from "./MapPanComponent";
-import MapCenterChangeComponent from "./MapCenterChangeComponent";
+import Markers, { type Marker } from "./Markers";
 
 export async function getPlaceDetails(
   query: string,

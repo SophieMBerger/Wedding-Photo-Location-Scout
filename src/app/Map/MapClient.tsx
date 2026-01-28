@@ -1,11 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import MapComponent, { getPlaceDetails } from "./MapComponent";
 import MapOverlay from "./MapOverlay";
-import { useState } from "react";
-import { getLocations } from "@/actions/getLocations";
-import { Marker } from "./Markers";
-import { describe } from "node:test";
+import type { Marker } from "./Markers";
 
 type MapClientProps = {
   initialMarkers: Marker[];

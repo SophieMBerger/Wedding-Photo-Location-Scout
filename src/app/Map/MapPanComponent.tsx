@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
+import { useEffect } from "react";
 
 export default function MapPanComponent({
   markerLocations,

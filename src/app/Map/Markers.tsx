@@ -1,4 +1,5 @@
-import { AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
+import { AdvancedMarker, InfoWindow, Pin } from "@vis.gl/react-google-maps";
+import { useState } from "react";
 
 export type Marker = {
   key: string;
@@ -12,9 +13,13 @@ export type Marker = {
 
 type MarkerProps = { markerLocations: Marker[] };
 
-function showMarkerDetails(key: string) {}
-
 export default function Markers({ markerLocations }: MarkerProps) {
+  const [selectedMarkerKey, setSelectedMarkerKey] = useState<string>("");
+
+  const selectedMarker = markerLocations.find(
+    (m) => m.key === selectedMarkerKey,
+  );
+
   return (
     <>
       {markerLocations.map((markerLocation) => (
@@ -22,11 +27,23 @@ export default function Markers({ markerLocations }: MarkerProps) {
           key={markerLocation.key}
           position={markerLocation.location}
           clickable={true}
-          title={markerLocation.key}
+          onClick={() => setSelectedMarkerKey(markerLocation.key)}
         >
           <Pin />
         </AdvancedMarker>
       ))}
+
+      {selectedMarker && (
+        <InfoWindow
+          position={selectedMarker.location}
+          onCloseClick={() => setSelectedMarkerKey("")}
+        >
+          <div>
+            <h3>{selectedMarker.name}</h3>
+            <h4>{selectedMarker.description}</h4>
+          </div>
+        </InfoWindow>
+      )}
     </>
   );
 }

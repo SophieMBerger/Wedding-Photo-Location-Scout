@@ -1,5 +1,5 @@
-import MapClient from "./Map/MapClient";
 import { getLocations } from "@/actions/getLocations";
+import MapClient from "./Map/MapClient";
 
 export default async function Home() {
   const locations = await getLocations();

@@ -1,7 +1,7 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { useState } from "react";
+import { Card } from "@/components/ui/card";
 
 export default function MapOverlay({
   onSearch,
