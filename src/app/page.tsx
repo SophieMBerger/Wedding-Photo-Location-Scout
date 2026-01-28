@@ -8,6 +8,8 @@ export default async function Home() {
 
   const markers = locations.map((loc) => ({
     key: String(loc.id),
+    name: loc.name,
+    description: loc.description,
     location: {
       lat: loc.latitude,
       lng: loc.longitude,

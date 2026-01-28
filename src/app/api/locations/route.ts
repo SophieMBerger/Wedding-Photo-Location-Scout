@@ -3,14 +3,14 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { name, lat, lng } = await req.json();
+    const { name, lat, lng, description } = await req.json();
 
     const location = await prisma.location.create({
       data: {
         name: name,
         latitude: lat,
         longitude: lng,
-        description: "Test description",
+        description: description,
       },
     });
 

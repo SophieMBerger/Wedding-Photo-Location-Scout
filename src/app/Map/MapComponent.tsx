@@ -2,7 +2,7 @@
 
 import { APIProvider, Map as GoogleMap } from "@vis.gl/react-google-maps";
 import assert from "assert";
-import Markers from "./Markers";
+import Markers, { Marker } from "./Markers";
 import { vancouverCoordinates } from "./MapClient";
 import MapPanComponent from "./MapPanComponent";
 import MapCenterChangeComponent from "./MapCenterChangeComponent";
@@ -32,10 +32,7 @@ export default function MapComponent({
   markerLocations,
   onCenterChange,
 }: {
-  markerLocations: {
-    key: string;
-    location: google.maps.LatLngLiteral;
-  }[];
+  markerLocations: Marker[];
   onCenterChange: (center: google.maps.LatLngLiteral) => void;
 }) {
   assert(

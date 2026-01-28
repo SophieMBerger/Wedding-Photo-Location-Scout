@@ -4,14 +4,8 @@ import MapComponent, { getPlaceDetails } from "./MapComponent";
 import MapOverlay from "./MapOverlay";
 import { useState } from "react";
 import { getLocations } from "@/actions/getLocations";
-
-export type Marker = {
-  key: string;
-  location: {
-    lat: number;
-    lng: number;
-  };
-};
+import { Marker } from "./Markers";
+import { describe } from "node:test";
 
 type MapClientProps = {
   initialMarkers: Marker[];
@@ -27,15 +21,19 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
     if (!query.trim()) return;
 
     const places = await getPlaceDetails(query, center);
-    if (!places[0].location) return;
 
     console.log("Details of place searched for: ", places[0]);
 
+    const place = places[0];
+    if (!place.location) return;
+
     const newMarker = {
-      key: places[0].id,
+      key: place.id,
+      name: place.displayName || "",
+      description: place.businessStatus || "",
       location: {
-        lat: places[0].location.lat(),
-        lng: places[0].location.lng(),
+        lat: place.location.lat(),
+        lng: place.location.lng(),
       },
     };
 
@@ -45,7 +43,8 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: newMarker.key,
+        name: newMarker.name,
+        description: newMarker.description,
         lat: newMarker.location.lat,
         lng: newMarker.location.lng,
       }),
