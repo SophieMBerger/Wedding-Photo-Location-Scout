@@ -36,17 +36,21 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
       lat: searchedPlace.location.lat(),
       lng: searchedPlace.location.lng(),
     });
+
+    return searchedPlace;
   }
 
-  async function handleSearch() {
-    if (!place || !place.location) return;
+  async function handleSave(description: string, query: string) {
+    const searchedPlace = await handlePlaceSearch(query);
+
+    if (!searchedPlace || !searchedPlace.location) return;
     const newMarker = {
-      key: place.id,
-      name: place.displayName || "",
-      description: place.businessStatus || "",
+      key: searchedPlace.id,
+      name: searchedPlace.displayName || "",
+      description: description,
       location: {
-        lat: place.location.lat(),
-        lng: place.location.lng(),
+        lat: searchedPlace.location.lat(),
+        lng: searchedPlace.location.lng(),
       },
     };
 
@@ -74,7 +78,7 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
       />
 
       <div className="absolute inset-0 pointer-events-none">
-        <MapOverlay onSearch={handleSearch} onQuerySubmit={handlePlaceSearch} />
+        <MapOverlay onSave={handleSave} onQuerySubmit={handlePlaceSearch} />
       </div>
     </div>
   );
