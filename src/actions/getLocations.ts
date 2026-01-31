@@ -8,6 +8,7 @@ export type LocationForMap = {
   longitude: number;
   name: string;
   description: string;
+  imageUrl: string | null;
   createdAt: Date;
 };
 
@@ -20,6 +21,7 @@ export async function getLocations(): Promise<LocationForMap[]> {
       longitude: true,
       name: true,
       description: true,
+      imageUrl: true,
       createdAt: true,
     },
   });

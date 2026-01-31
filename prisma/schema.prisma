@@ -19,5 +19,6 @@ model Location {
   latitude    Float
   longitude   Float
   description String
+  imageUrl    String?
   createdAt   DateTime @default(now())
 }

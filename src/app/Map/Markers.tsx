@@ -1,10 +1,12 @@
 import { AdvancedMarker, InfoWindow, Pin } from "@vis.gl/react-google-maps";
 import { useState } from "react";
+import Image from "next/image";
 
 export type Marker = {
   key: string;
   name: string;
   description: string;
+  imageUrl: string | null;
   location: {
     lat: number;
     lng: number;
@@ -39,7 +41,16 @@ export default function Markers({ markerLocations }: MarkerProps) {
           onCloseClick={() => setSelectedMarkerKey("")}
         >
           <div>
-            <h3>{selectedMarker.name}</h3>
+            {selectedMarker.imageUrl && (
+              <Image
+                src={selectedMarker.imageUrl}
+                width={80}
+                height={80}
+                alt="Preview of the location"
+              />
+            )}
+
+            <h1 className="text-lg">{selectedMarker.name}</h1>
             <h4>{selectedMarker.description}</h4>
           </div>
         </InfoWindow>

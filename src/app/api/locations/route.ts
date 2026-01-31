@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { name, lat, lng, description } = await req.json();
+    const { name, lat, lng, description, imageUrl } = await req.json();
 
     const location = await prisma.location.create({
       data: {
@@ -11,6 +11,7 @@ export async function POST(req: Request) {
         latitude: lat,
         longitude: lng,
         description: description,
+        imageUrl: imageUrl,
       },
     });
 

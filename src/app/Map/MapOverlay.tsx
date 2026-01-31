@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,16 +9,28 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import type { PutBlobResult } from "@vercel/blob";
 
 export default function MapOverlay({
   onSave,
   onQuerySubmit,
 }: {
-  onSave: (description: string, query: string) => void;
+  onSave: (description: string, query: string, image: File | null) => void;
   onQuerySubmit: (query: string) => void;
 }) {
   const [place, setPlace] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    console.log("Image uploaded: ", file.name, file.type, file.size);
+
+    setImage(file);
+  };
 
   return (
     <div className="absolute top-4 left-4 z-50 pointer-events-auto">
@@ -31,7 +43,8 @@ export default function MapOverlay({
         >
           <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
-              <input
+              <Input
+                className=""
                 id="place"
                 autoComplete="on"
                 placeholder="Location name"
@@ -42,25 +55,34 @@ export default function MapOverlay({
                 <Button
                   type="button"
                   disabled={!place}
-                  onClick={() => onSave(description, place)}
+                  onClick={() => onSave(description, place, image)}
                 >
                   Save Location
                 </Button>
               )}
             </div>
             {place && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline">Add Notes</Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <Textarea
-                    placeholder="Enter your notes here."
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </PopoverContent>
-              </Popover>
+              <div className="flex flex-row gap-2">
+                <Input
+                  className="flex mb-2"
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                ></Input>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline">Add Notes</Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Textarea
+                      placeholder="Enter your notes here."
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             )}
           </div>
         </form>

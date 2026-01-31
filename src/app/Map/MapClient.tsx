@@ -4,6 +4,7 @@ import { useState } from "react";
 import MapComponent, { getPlaceDetails } from "./MapComponent";
 import MapOverlay from "./MapOverlay";
 import type { Marker } from "./Markers";
+import { PutBlobResult } from "@vercel/blob";
 
 type MapClientProps = {
   initialMarkers: Marker[];
@@ -16,7 +17,7 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
   const [markers, setMarkers] = useState(initialMarkers);
   const [locationSearched, setLocationSearched] =
     useState<google.maps.LatLngLiteral>(vancouverCoordinates);
-  const [place, setPlace] = useState<google.maps.places.Place | null>(null);
+  const [blob, setBlob] = useState<PutBlobResult | null>(null);
 
   async function handlePlaceSearch(query: string) {
     if (!query.trim()) return;
@@ -30,8 +31,6 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
     if (!searchedPlace) return;
     if (!searchedPlace.location) return;
 
-    setPlace(searchedPlace);
-
     setLocationSearched({
       lat: searchedPlace.location.lat(),
       lng: searchedPlace.location.lng(),
@@ -40,14 +39,42 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
     return searchedPlace;
   }
 
-  async function handleSave(description: string, query: string) {
+  async function handleSave(
+    description: string,
+    query: string,
+    image: File | null,
+  ) {
     const searchedPlace = await handlePlaceSearch(query);
+
+    let newBlob: PutBlobResult | null = null;
+
+    if (image) {
+      const response = await fetch(
+        `/api/locations/upload?filename=${image?.name}`,
+        {
+          method: "POST",
+          body: image,
+        },
+      );
+
+      newBlob = (await response.json()) as PutBlobResult;
+
+      console.log("Blob result: ", newBlob);
+
+      setBlob(newBlob);
+    } else {
+      console.log("No image provided");
+    }
+    const imageUrl = newBlob?.url ?? null;
+
+    console.log("Blob url: ", imageUrl);
 
     if (!searchedPlace || !searchedPlace.location) return;
     const newMarker = {
       key: searchedPlace.id,
       name: searchedPlace.displayName || "",
       description: description,
+      imageUrl: imageUrl,
       location: {
         lat: searchedPlace.location.lat(),
         lng: searchedPlace.location.lng(),
@@ -63,10 +90,9 @@ export default function MapClient({ initialMarkers }: MapClientProps) {
         description: newMarker.description,
         lat: newMarker.location.lat,
         lng: newMarker.location.lng,
+        imageUrl: imageUrl,
       }),
     });
-
-    setPlace(null);
   }
 
   return (

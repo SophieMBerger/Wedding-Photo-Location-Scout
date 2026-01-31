@@ -10,6 +10,7 @@ export default async function Home() {
     key: String(loc.id),
     name: loc.name,
     description: loc.description,
+    imageUrl: loc.imageUrl,
     location: {
       lat: loc.latitude,
       lng: loc.longitude,
